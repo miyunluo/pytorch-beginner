@@ -56,8 +56,8 @@ for i in range(epoches):
 	running_loss = 0.
 	running_acc = 0.
 	for(img, label) in trainloader:
-		img = Variable(img)
-		label = Variable(label)
+		img = torch.tensor(img)
+		label = torch.tensor(label)
 
 		optimizer.zero_grad()
 		output = lenet(img)
@@ -67,10 +67,11 @@ for i in range(epoches):
 		loss.backward()
 		optimizer.step()
 
-		running_loss += loss.data[0]
+		running_loss += loss.data
 		_, predict = torch.max(output, 1)
 		correct_num = (predict == label).sum()
-		running_acc += correct_num.data[0]
+		running_acc += correct_num.item()
+		#print("corr: ", correct_num.data)
 
 	running_loss /= len(trainset)
 	running_acc /= len(trainset)
@@ -82,16 +83,16 @@ lenet.eval()
 testloss = 0.
 testacc = 0.
 for(img, label) in testloader:
-	img = Variable(img)
-	label = Variable(label)
+	img = torch.tensor(img)
+	label = torch.tensor(label)
 
 	output = lenet(img)
 	loss = criterian(output, label)
-	testloss += loss.data[0]
+	testloss += loss.data
 
 	_,predict = torch.max(output, 1)
 	num_correct = (predict == label).sum()
-	testacc += num_correct.data[0]
+	testacc += num_correct.item()
 
 testloss /= len(testset)
 testacc /= len(testset)
